@@ -333,20 +333,20 @@ public final class Constants {
     public static final double WRIST_POS_TO_DEG = (360.0 / HardwareConstants.FALCON_ENCODER_RESOLUTION) / WRIST_GEAR_RATIO;
     public static final double DEG_TO_WRIST_POS = (HardwareConstants.FALCON_ENCODER_RESOLUTION / 360.0) * WRIST_GEAR_RATIO;
 
-    public static final boolean WRIST_MOTOR_INVERTED = true;
+    public static final InvertedValue WRIST_MOTOR_INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_P = 2;
     public static final double WRIST_I = 0;
     public static final double WRIST_D = 0;
     public static final double WRIST_F = 0;
-    public static final double WRIST_MAX_VELOCITY_ENCODER_UNITS = 90 * DEG_TO_WRIST_POS;
-    public static final double WRIST_MAX_ACCELERATION_ENCODER_UNITS = 180 * DEG_TO_WRIST_POS;
+    public static final double WRIST_MAX_VELOCITY_ROTATIONS = 90 * DEG_TO_WRIST_POS / 2048.0;
+    public static final double WRIST_MAX_ACCELERATION_ROTATIONS = 180 * DEG_TO_WRIST_POS / 2048.0;
     public static final double WRIST_TOLERANCE = 0 * DEG_TO_WRIST_POS;
     public static final int WRIST_SMOOTHING = 0;
     
     public static final boolean INTAKE_MOTOR_INVERTED = false;
 
-    public static final double MIN_WRIST_ROTATION_ENCODER_UNITS = 0 * DEG_TO_WRIST_POS;
-    public static final double MAX_WRIST_ROTATION_ENCODER_UNITS = 180 * DEG_TO_WRIST_POS;
+    public static final double MIN_WRIST_ROTATION_ROTATION = 0 * DEG_TO_WRIST_POS / 2048.0;
+    public static final double MAX_WRIST_ROTATION_ROTATIONS = 180.0 * DEG_TO_WRIST_POS / 2048.0;
 
     public static final double PICKUP_CONE_INTAKE_SPEED = 0.5;
 

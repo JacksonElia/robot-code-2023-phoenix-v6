@@ -1,10 +1,8 @@
 package frc.robot.subsystems.claw;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,44 +12,61 @@ import frc.robot.extras.SmartDashboardLogger;
 
 public class ClawSubsystemImpl extends SubsystemBase implements ClawSubsystem {
 
-  private final WPI_TalonFX wristMotor;
-  private final WPI_TalonFX intakeMotor;
+  private final TalonFX wristMotor;
+  private final TalonFX intakeMotor;
   private final DoubleSolenoid clawSolenoid;
 
   private boolean isClawClosed;
   private boolean isManualControl = false;
 
   public ClawSubsystemImpl() {
-    wristMotor = new WPI_TalonFX(ClawConstants.WRIST_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
-    intakeMotor = new WPI_TalonFX(ClawConstants.INTAKE_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
+    wristMotor = new TalonFX(ClawConstants.WRIST_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
+    intakeMotor = new TalonFX(ClawConstants.INTAKE_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
 
-    wristMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
-    
-    wristMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.config_kP(0, ClawConstants.WRIST_P, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.config_kI(0, ClawConstants.WRIST_I, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.config_kD(0, ClawConstants.WRIST_D, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.config_kF(0, ClawConstants.WRIST_F, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configAllowableClosedloopError(0, ClawConstants.WRIST_TOLERANCE, HardwareConstants.TIMEOUT_MS);
 
-    wristMotor.config_kP(0, ClawConstants.WRIST_P, HardwareConstants.TIMEOUT_MS);
-    wristMotor.config_kI(0, ClawConstants.WRIST_I, HardwareConstants.TIMEOUT_MS);
-    wristMotor.config_kD(0, ClawConstants.WRIST_D, HardwareConstants.TIMEOUT_MS);
-    wristMotor.config_kF(0, ClawConstants.WRIST_F, HardwareConstants.TIMEOUT_MS);
-    wristMotor.configAllowableClosedloopError(0, ClawConstants.WRIST_TOLERANCE, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configMotionCruiseVelocity(ClawConstants.WRIST_MAX_VELOCITY_ENCODER_UNITS, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configMotionAcceleration(ClawConstants.WRIST_MAX_ACCELERATION_ENCODER_UNITS, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configMotionSCurveStrength(ClawConstants.WRIST_SMOOTHING, HardwareConstants.TIMEOUT_MS);
 
-    wristMotor.configMotionCruiseVelocity(ClawConstants.WRIST_MAX_VELOCITY_ENCODER_UNITS, HardwareConstants.TIMEOUT_MS);
-    wristMotor.configMotionAcceleration(ClawConstants.WRIST_MAX_ACCELERATION_ENCODER_UNITS, HardwareConstants.TIMEOUT_MS);
-    wristMotor.configMotionSCurveStrength(ClawConstants.WRIST_SMOOTHING, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configForwardSoftLimitThreshold(ClawConstants.MAX_WRIST_ROTATION_ENCODER_UNITS, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configForwardSoftLimitEnable(true, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configReverseSoftLimitThreshold(ClawConstants.MIN_WRIST_ROTATION_ENCODER_UNITS, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.configReverseSoftLimitEnable(true, HardwareConstants.TIMEOUT_MS);
 
+    // wristMotor.setInverted(ClawConstants.WRIST_MOTOR_INVERTED);
+    // wristMotor.setNeutralMode(NeutralMode.Brake);
+    // wristMotor.setSelectedSensorPosition(0);
+    // wristMotor.configNeutralDeadband(HardwareConstants.MIN_FALCON_DEADBAND);
 
-    wristMotor.configForwardSoftLimitThreshold(ClawConstants.MAX_WRIST_ROTATION_ENCODER_UNITS, HardwareConstants.TIMEOUT_MS);
-    wristMotor.configForwardSoftLimitEnable(true, HardwareConstants.TIMEOUT_MS);
-    wristMotor.configReverseSoftLimitThreshold(ClawConstants.MIN_WRIST_ROTATION_ENCODER_UNITS, HardwareConstants.TIMEOUT_MS);
-    wristMotor.configReverseSoftLimitEnable(true, HardwareConstants.TIMEOUT_MS);
+    // wristMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
+    // wristMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 250);
+    TalonFXConfiguration wristConfig = new TalonFXConfiguration();
+    wristConfig.Slot0.kP = ClawConstants.WRIST_P;
+    wristConfig.Slot0.kI = ClawConstants.WRIST_I;
+    wristConfig.Slot0.kD = ClawConstants.WRIST_D;
+    wristConfig.Slot0.kS = ClawConstants.WRIST_F;
+    wristConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
 
-    wristMotor.setInverted(ClawConstants.WRIST_MOTOR_INVERTED);
-    wristMotor.setNeutralMode(NeutralMode.Brake);
-    wristMotor.setSelectedSensorPosition(0);
-    wristMotor.configNeutralDeadband(HardwareConstants.MIN_FALCON_DEADBAND);
+    wristConfig.MotionMagic.MotionMagicAcceleration = ClawConstants.WRIST_MAX_ACCELERATION_ROTATIONS;
+    wristConfig.MotionMagic.MotionMagicCruiseVelocity = ClawConstants.WRIST_MAX_VELOCITY_ROTATIONS;
 
-    wristMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
-    wristMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 250);
+    wristConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClawConstants.MAX_WRIST_ROTATION_ROTATIONS;
+    wristConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClawConstants.MIN_WRIST_ROTATION_ROTATION;
+    wristConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    wristConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
+    wristConfig.MotorOutput.Inverted = ClawConstants.WRIST_MOTOR_INVERTED;
+    wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    wristConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
+    wristMotor.getConfigurator().apply(wristConfig, HardwareConstants.TIMEOUT_MS);
+    wristMotor.setRotorPosition(0);
 
     intakeMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
 
