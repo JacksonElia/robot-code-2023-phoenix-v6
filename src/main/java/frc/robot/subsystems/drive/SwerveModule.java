@@ -222,7 +222,9 @@ public class SwerveModule {
   }
 
   public double getAbsolutePosition() {
-    return turnEncoder.getAbsolutePosition();
+    // return turnEncoder.getAbsolutePosition();
+    turnEncoderPos.refresh();
+    return turnEncoderPos.getValue();
   }
 
   /**
@@ -230,14 +232,15 @@ public class SwerveModule {
    * @return current CANCoder position
    */
   public double getCANCoderABS(){
-    return turnEncoder.getAbsolutePosition();
+    turnEncoderPos.refresh();
+    return turnEncoderPos.getValue();
   }
 
   @Deprecated
   /** Zeros all the SwerveModule encoders. */
   public void resetEncoders() {
     turnEncoder.setPosition(0);
-    driveMotor.setSelectedSensorPosition(0);
+    driveMotor.setRotorPosition(0);
   }
 
   public void periodicFunction() {}

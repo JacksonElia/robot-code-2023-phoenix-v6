@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -162,15 +163,15 @@ public final class Constants {
     public static final double REAR_LEFT_ZERO_ANGLE = 46.58203125;
     public static final double REAR_RIGHT_ZERO_ANGLE = -78.57421875 + 90;
 
-    public static final boolean FRONT_LEFT_CANCODER_REVERSED = false;
-    public static final boolean FRONT_RIGHT_CANCODER_REVERSED = false;
-    public static final boolean REAR_LEFT_CANCODER_REVERSED = false;
-    public static final boolean REAR_RIGHT_CANCODER_REVERSED = false;
+    public static final SensorDirectionValue FRONT_LEFT_CANCODER_REVERSED = SensorDirectionValue.CounterClockwise_Positive;
+    public static final SensorDirectionValue FRONT_RIGHT_CANCODER_REVERSED = SensorDirectionValue.CounterClockwise_Positive;
+    public static final SensorDirectionValue REAR_LEFT_CANCODER_REVERSED = SensorDirectionValue.CounterClockwise_Positive;
+    public static final SensorDirectionValue REAR_RIGHT_CANCODER_REVERSED = SensorDirectionValue.CounterClockwise_Positive;
     
-    public static final boolean FRONT_LEFT_DRIVE_ENCODER_REVERSED = false;
-    public static final boolean FRONT_RIGHT_DRIVE_ENCODER_REVERSED = true; 
-    public static final boolean REAR_LEFT_DRIVE_ENCODER_REVERSED = false;
-    public static final boolean REAR_RIGHT_DRIVE_ENCODER_REVERSED = true;
+    public static final InvertedValue FRONT_LEFT_DRIVE_ENCODER_REVERSED = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue FRONT_RIGHT_DRIVE_ENCODER_REVERSED = InvertedValue.Clockwise_Positive; 
+    public static final InvertedValue REAR_LEFT_DRIVE_ENCODER_REVERSED = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue REAR_RIGHT_DRIVE_ENCODER_REVERSED = InvertedValue.Clockwise_Positive;
     
     public static final double TURN_S = 0.77;
     public static final double TURN_V = 0.75;
