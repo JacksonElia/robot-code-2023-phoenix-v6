@@ -106,7 +106,7 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
     leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ArmConstants.MIN_ROTATION_ROTATIONS;
     leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    leaderRotationMotor.getConfigurator().apply(leaderConfig, HardwareConstants.TIMEOUT_MS);
+    leaderRotationMotor.getConfigurator().apply(leaderConfig, HardwareConstants.TIMEOUT_S);
 
     // followerRotationMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
     // followerRotationMotor.setInverted(InvertType.OpposeMaster);
@@ -116,7 +116,7 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
     TalonFXConfiguration followerConfig = new TalonFXConfiguration();
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     // TODO: sensor phase
-    followerRotationMotor.getConfigurator().apply(followerConfig, HardwareConstants.TIMEOUT_MS);
+    followerRotationMotor.getConfigurator().apply(followerConfig, HardwareConstants.TIMEOUT_S);
     Follower follower = new Follower(leaderRotationMotor.getDeviceID(), true);
     followerRotationMotor.setControl(follower);
 
@@ -132,8 +132,8 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
     extensionConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
     extensionConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ArmConstants.MAX_EXTENSION_METERS * ArmConstants.EXTENSION_METERS_TO_MOTOR_ROTATIONS;
     extensionConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    extensionMotor.setRotorPosition(0, HardwareConstants.TIMEOUT_MS);
-    extensionMotor.getConfigurator().apply(extensionConfig, HardwareConstants.TIMEOUT_MS);
+    extensionMotor.setRotorPosition(0, HardwareConstants.TIMEOUT_S);
+    extensionMotor.getConfigurator().apply(extensionConfig, HardwareConstants.TIMEOUT_S);
     this.extensionConfig = extensionConfig;
 
     extensionMotorPos = extensionMotor.getRotorPosition();
@@ -230,7 +230,7 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
   @Override
   public void setExtensionMotorNeutralMode(NeutralModeValue neutralMode) {
     extensionConfig.MotorOutput.NeutralMode = neutralMode;
-    extensionMotor.getConfigurator().apply(extensionConfig, HardwareConstants.TIMEOUT_MS);
+    extensionMotor.getConfigurator().apply(extensionConfig, HardwareConstants.TIMEOUT_S);
   }
 
   @Override

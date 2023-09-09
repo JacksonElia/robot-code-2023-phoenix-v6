@@ -84,7 +84,7 @@ public class SwerveModule {
     turnEncoderConfig.MagnetSensor.MagnetOffset = -angleZero;
     turnEncoderConfig.MagnetSensor.SensorDirection = encoderReversed;
     turnEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
-    turnEncoder.getConfigurator().apply(turnEncoderConfig, HardwareConstants.TIMEOUT_MS);
+    turnEncoder.getConfigurator().apply(turnEncoderConfig, HardwareConstants.TIMEOUT_S);
 
     // driveMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
     // driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, HardwareConstants.TIMEOUT_MS);
@@ -109,7 +109,7 @@ public class SwerveModule {
     driveConfig.MotorOutput.Inverted = driveReversed;
     driveConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
     // TODO: current limits
-    driveMotor.getConfigurator().apply(driveConfig, HardwareConstants.TIMEOUT_MS);
+    driveMotor.getConfigurator().apply(driveConfig, HardwareConstants.TIMEOUT_S);
 
     // turnMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
     // turnMotor.setNeutralMode(NeutralMode.Brake);
@@ -124,7 +124,7 @@ public class SwerveModule {
     turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     turnConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
     // TODO: config current limits
-    turnMotor.getConfigurator().apply(turnConfig, HardwareConstants.TIMEOUT_MS);
+    turnMotor.getConfigurator().apply(turnConfig, HardwareConstants.TIMEOUT_S);
 
     // Limit the PID Controller's input range between -pi and pi and set the input to be continuous.
     turnPIDController.enableContinuousInput(-Math.PI, Math.PI);

@@ -1,6 +1,8 @@
 package frc.robot.subsystems.claw;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -18,6 +20,8 @@ public class ClawSubsystemImpl extends SubsystemBase implements ClawSubsystem {
 
   private boolean isClawClosed;
   private boolean isManualControl = false;
+
+  private StatusSignal<Double> wristPos;
 
   public ClawSubsystemImpl() {
     wristMotor = new TalonFX(ClawConstants.WRIST_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
@@ -65,17 +69,21 @@ public class ClawSubsystemImpl extends SubsystemBase implements ClawSubsystem {
     wristConfig.MotorOutput.Inverted = ClawConstants.WRIST_MOTOR_INVERTED;
     wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     wristConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
-    wristMotor.getConfigurator().apply(wristConfig, HardwareConstants.TIMEOUT_MS);
+    wristMotor.getConfigurator().apply(wristConfig, HardwareConstants.TIMEOUT_S);
     wristMotor.setRotorPosition(0);
 
-    intakeMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
+    // intakeMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
 
-    intakeMotor.setInverted(ClawConstants.INTAKE_MOTOR_INVERTED);
-    intakeMotor.setNeutralMode(NeutralMode.Brake);
-    intakeMotor.configNeutralDeadband(HardwareConstants.MIN_FALCON_DEADBAND, HardwareConstants.TIMEOUT_MS);
+    // intakeMotor.setInverted(ClawConstants.INTAKE_MOTOR_INVERTED);
+    // intakeMotor.setNeutralMode(NeutralMode.Brake);
+    // intakeMotor.configNeutralDeadband(HardwareConstants.MIN_FALCON_DEADBAND, HardwareConstants.TIMEOUT_MS);
 
-    intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
-    intakeMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 250);
+    // intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
+    // intakeMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 250);
+    TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
+    intakeConfig.MotorOutput.Inverted = ClawConstants.INTAKE_MOTOR_INVERTED;
+    intakeConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
+    intakeMotor.getConfigurator().apply(intakeConfig, HardwareConstants.TIMEOUT_S);
 
     clawSolenoid = new DoubleSolenoid(
       HardwareConstants.PNEUMATICS_MODULE_TYPE,
@@ -84,6 +92,7 @@ public class ClawSubsystemImpl extends SubsystemBase implements ClawSubsystem {
     );
 
     isManualControl = false;
+    wristPos = wristMotor.getRotorPosition();
   }
 
   @Override
@@ -115,17 +124,20 @@ public class ClawSubsystemImpl extends SubsystemBase implements ClawSubsystem {
 
   @Override
   public double getWristAngle() {
-    return wristMotor.getSelectedSensorPosition() * ClawConstants.WRIST_POS_TO_DEG;
+    wristPos.refresh();
+    return wristPos.getValue() * ClawConstants.WRIST_POS_TO_DEG;
   }
 
   @Override
   public void zeroWristEncoder() {
-    wristMotor.setSelectedSensorPosition(0);
+    wristMotor.setRotorPosition(0);
   }
 
   @Override
   public void setWristPosition(double angle) {
-    wristMotor.set(ControlMode.MotionMagic, angle * ClawConstants.DEG_TO_WRIST_POS);
+    // wristMotor.set(ControlMode.MotionMagic, angle * ClawConstants.DEG_TO_WRIST_POS);
+    MotionMagicVoltage request = new MotionMagicVoltage(angle * ClawConstants.DEG_TO_WRIST_POS);
+    wristMotor.setControl(request);
   }
 
 
