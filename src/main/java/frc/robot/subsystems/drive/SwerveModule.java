@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.Constants.ModuleConstants;
+import frc.robot.extras.SmartDashboardLogger;
 
 public class SwerveModule {
 
@@ -42,11 +43,11 @@ public class SwerveModule {
     DriveConstants.TURN_A
   );
 
-  private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(
-    ModuleConstants.DRIVE_S,
-    ModuleConstants.DRIVE_V,
-    ModuleConstants.DRIVE_A
-  );
+  // private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(
+  //   ModuleConstants.DRIVE_S,
+  //   ModuleConstants.DRIVE_V,
+  //   ModuleConstants.DRIVE_A
+  // );
 
   StatusSignal<Double> turnEncoderPos;
   StatusSignal<Double> driveMotorVelocity;
@@ -104,7 +105,8 @@ public class SwerveModule {
     driveConfig.Slot0.kP = ModuleConstants.DRIVE_P;
     driveConfig.Slot0.kI = ModuleConstants.DRIVE_I;
     driveConfig.Slot0.kD = ModuleConstants.DRIVE_D;
-    driveConfig.Slot0.kS = ModuleConstants.DRIVE_F;
+    driveConfig.Slot0.kS = ModuleConstants.DRIVE_S;
+    driveConfig.Slot0.kV = ModuleConstants.DRIVE_V;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.MotorOutput.Inverted = driveReversed;
     driveConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
@@ -205,6 +207,8 @@ public class SwerveModule {
     // Sets the drive motor's speed using the built in pid controller
     // driveMotor.set(ControlMode.Velocity, desiredDriveEncoderUnitsPer100MS, 
     //   DemandType.ArbitraryFeedForward, driveFeedForward.calculate(optimizedDesiredState.speedMetersPerSecond));
+    // driveOutput.FeedForward = driveFeedForward.calculate(optimizedDesiredState.speedMetersPerSecond);
+
     VelocityVoltage driveOutput = new VelocityVoltage(desiredDriveEncoderUnitsPer100MS);
     driveMotor.setControl(driveOutput);
 
@@ -243,5 +247,6 @@ public class SwerveModule {
     driveMotor.setRotorPosition(0);
   }
 
-  public void periodicFunction() {}
+  public void periodicFunction() {
+  }
 }

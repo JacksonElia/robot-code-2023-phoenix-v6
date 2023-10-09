@@ -157,10 +157,10 @@ public final class Constants {
     public static final int REAR_LEFT_CANCODER_ID = 13;
     public static final int REAR_RIGHT_CANCODER_ID = 14;
 
-    public static final double FRONT_LEFT_ZERO_ANGLE = 169.716796875;
-    public static final double FRONT_RIGHT_ZERO_ANGLE = -76.46484375;
-    public static final double REAR_LEFT_ZERO_ANGLE = 46.58203125;
-    public static final double REAR_RIGHT_ZERO_ANGLE = -78.57421875;
+    public static final double FRONT_LEFT_ZERO_ANGLE = 0.48876953125;
+    public static final double FRONT_RIGHT_ZERO_ANGLE = -0.2255859375;
+    public static final double REAR_LEFT_ZERO_ANGLE = 0.1220703125;
+    public static final double REAR_RIGHT_ZERO_ANGLE = -0.196533203125;
 
     public static final SensorDirectionValue FRONT_LEFT_CANCODER_REVERSED = SensorDirectionValue.CounterClockwise_Positive;
     public static final SensorDirectionValue FRONT_RIGHT_CANCODER_REVERSED = SensorDirectionValue.CounterClockwise_Positive;
@@ -177,7 +177,7 @@ public final class Constants {
     public static final double TURN_A = 0;
     public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 4;
 
-    public static final double MAX_SPEED_METERS_PER_SECOND = 4.5;
+    public static final double MAX_SPEED_METERS_PER_SECOND = 2;
 
     public static final double FACEFORWARD_P = 0.015;
 
@@ -216,7 +216,7 @@ public final class Constants {
     public static final double DRIVE_TO_METERS = 
       WHEEL_CIRCUMFERENCE_METERS / (DRIVE_GEAR_RATIO * HardwareConstants.FALCON_ENCODER_RESOLUTION);
     public static final double DRIVE_TO_METERS_PER_SECOND =
-      (10 * WHEEL_CIRCUMFERENCE_METERS) / (DRIVE_GEAR_RATIO * HardwareConstants.FALCON_ENCODER_RESOLUTION);
+      (WHEEL_CIRCUMFERENCE_METERS) / (DRIVE_GEAR_RATIO * HardwareConstants.FALCON_ENCODER_RESOLUTION);
 
     public static final double TURN_P = 7; // 8.1
     public static final double TURN_I = 0;
@@ -229,13 +229,12 @@ public final class Constants {
         MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED
       );
 
-    public static final double DRIVE_F = 0; // 0.059;
-    public static final double DRIVE_P = 0.3; // 0.19;
+    public static final double DRIVE_P = 0;
     public static final double DRIVE_I = 0;
     public static final double DRIVE_D = 0;
-    public static final double DRIVE_S = 0.29155 / 12.0;
-    public static final double DRIVE_V = 2.3621 / 12.0;
-    public static final double DRIVE_A = 0.72606 / 12.0;
+
+    public static final double DRIVE_S = 0.18;
+    public static final double DRIVE_V = 1.25;
   }
 
   public static final class ArmConstants {
@@ -246,22 +245,22 @@ public final class Constants {
     public static final int EXTENSION_LOCK_ENGAGED_ID = 2;
     public static final int EXTENSION_LOCK_DISENGAGED_ID = 3;
 
-    public static final double ROTATION_ENCODER_OFFSET = (-9.580078125 - 180) / 360;  // TODO: rotations?
+    public static final double ROTATION_ENCODER_OFFSET = (-9.580078125 - 180) / 360;
 
     public static final double EXTENSION_MOTOR_GEAR_RATIO = 16.0;
     public static final double EXTENSION_SPOOL_DIAMETER = Units.inchesToMeters(2.5);
     public static final double MAX_EXTENSION_METERS = 1.2;
-    public static final double EXTENSION_MOTOR_POS_TO_METERS = EXTENSION_SPOOL_DIAMETER / (HardwareConstants.FALCON_ENCODER_RESOLUTION * EXTENSION_MOTOR_GEAR_RATIO) * Math.PI; // TODO: check if 1 is a replacement for encoder resolution
+    public static final double EXTENSION_MOTOR_POS_TO_METERS = EXTENSION_SPOOL_DIAMETER / (HardwareConstants.FALCON_ENCODER_RESOLUTION * EXTENSION_MOTOR_GEAR_RATIO) * Math.PI;
     public static final double EXTENSION_METERS_TO_MOTOR_ROTATIONS = -1.0 / EXTENSION_MOTOR_POS_TO_METERS;
 
     public static final InvertedValue LEADER_ROTATION_MOTOR_INVERTED = InvertedValue.CounterClockwise_Positive;
-    public static final double ROTATION_P = 3.5 / 4096.0; // TODO: tune (3.5 = cancoder units)
+    public static final double ROTATION_P = 40; // TODO: tune (3.5 = cancoder units)
     public static final double ROTATION_I = 0;
     public static final double ROTATION_D = 0;
-    public static final double ROTATION_MAX_VELOCITY_ROTATION = 240.0 / 4096.0; // TODO: same here
-    public static final double ROTATION_MAX_ACCELERATION_ROTATIONS = 400.0 / 4096.0;
+    public static final double ROTATION_MAX_VELOCITY_ROTATION = 240.0 / 360.0; // TODO: same here
+    public static final double ROTATION_MAX_ACCELERATION_ROTATIONS = 400.0 / 360.0;
     public static final int ROTATION_SMOOTHING = 1;
-    public static final double ROTATION_ACCEPTABLE_ERROR = 0.01 / 360.0;
+    public static final double ROTATION_ACCEPTABLE_ERROR = 0.01;
     public static final double ROTATION_TOLERANCE_DEGREES = 0;
     public static final double ROTATION_TOLERANCE_ENCODER_UNITS = ROTATION_TOLERANCE_DEGREES * Conversions.DEGREES_TO_CANCODER_UNITS;
     public static final double MAX_ROTATION_ROTATIONS = 305.5 * Conversions.DEGREES_TO_CANCODER_UNITS;
@@ -270,7 +269,7 @@ public final class Constants {
     public static final InvertedValue EXTENSION_MOTOR_INVERTED = InvertedValue.Clockwise_Positive;
     public static final double EXTENSION_ACCELERATION_GAIN = 0;
     public static final double EXTENSION_VELOCITY_GAIN = 0.2;
-    public static final double EXTENSION_P = -6; // TODO: don't change bc external PID?
+    public static final double EXTENSION_P = -5; // -6
     public static final double EXTENSION_I = 0;
     public static final double EXTENSION_D = 0;
     public static final double EXTENSION_F = 0;
@@ -286,25 +285,25 @@ public final class Constants {
     public static final double STOWED_ROTATION = 180;
     public static final double STOWED_EXTENSION = 0.01;
 
-    public static final double PICKUP_GROUND_ROTATION_AUTO = 288;
+    public static final double PICKUP_GROUND_ROTATION_AUTO = 288.0 / 360.0;
     public static final double PICKUP_GROUND_EXTENSION_AUTO = 0.875;
-    public static final double PICKUP_GROUND_ROTATION = 305;
+    public static final double PICKUP_GROUND_ROTATION = 305.0 / 360.0;
     public static final double PICKUP_GROUND_EXTENSION = 0.13;
-    public static final double PICKUP_LOADING_STATION_ROTATION = 111;
+    public static final double PICKUP_LOADING_STATION_ROTATION = 111.0 / 360.0;
     public static final double PICKUP_LOADING_STATION_EXTENSION = .768;
-    public static final double PICKUP_CHUTE_ROTATION = 104.3;
+    public static final double PICKUP_CHUTE_ROTATION = 104.3 / 360.0;
     public static final double PICKUP_CHUTE_EXTENSION = 0.215;
 
-    public static final double PLACE_HIGH_ROTATION = 234.5;
+    public static final double PLACE_HIGH_ROTATION = 234.5 / 360.0;
     public static final double PLACE_HIGH_EXTENSION = 1.08;
     // TODO: Get values
-    public static final double PLACE_MIDDLE_ROTATION = 239.2;
+    public static final double PLACE_MIDDLE_ROTATION = 239.2 / 360.0;
     public static final double PLACE_MIDDLE_EXTENSION = 0.38;
-    public static final double PLACE_LOW_ROTATION = 180;
+    public static final double PLACE_LOW_ROTATION = 180.0 / 360.0;
     public static final double PLACE_LOW_EXTENSION = 0.5;
-    public static final double PLACE_MIDDLE_AUTO_ROTATION = 109.5;
+    public static final double PLACE_MIDDLE_AUTO_ROTATION = 109.5 / 360.0;
     public static final double PLACE_MIDDLE_AUTO_EXTENSION = 0.9;
-    public static final double SHOOT_CUBE_MIDDLE_ROTATION = 135;
+    public static final double SHOOT_CUBE_MIDDLE_ROTATION = 135.0 / 360.0;
 
     public static final double ARM_WEIGHT_NEWTONS = 9.8 * 25;
     public static final double ARM_AXIS_OF_ROTATION_RADIUS = Units.inchesToMeters(2.1);
@@ -333,11 +332,11 @@ public final class Constants {
     public static final double DEG_TO_WRIST_POS = (HardwareConstants.FALCON_ENCODER_RESOLUTION / 360.0) * WRIST_GEAR_RATIO;
 
     public static final InvertedValue WRIST_MOTOR_INVERTED = InvertedValue.Clockwise_Positive;
-    public static final double WRIST_P = 2.0 / 2048.0; // TODO: check
+    public static final double WRIST_P = 20; // TODO: check
     public static final double WRIST_I = 0;
     public static final double WRIST_D = 0;
     public static final double WRIST_F = 0;
-    public static final double WRIST_MAX_VELOCITY_ROTATIONS = 90 * DEG_TO_WRIST_POS;
+    public static final double WRIST_MAX_VELOCITY_ROTATIONS = 180 * DEG_TO_WRIST_POS;
     public static final double WRIST_MAX_ACCELERATION_ROTATIONS = 180 * DEG_TO_WRIST_POS;
     public static final double WRIST_TOLERANCE = 0 * DEG_TO_WRIST_POS;
     public static final int WRIST_SMOOTHING = 0;

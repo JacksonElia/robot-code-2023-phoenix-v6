@@ -7,6 +7,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LEDConstants.LEDProcess;
 import frc.robot.extras.NodeAndModeRegistry;
+import frc.robot.extras.SmartDashboardLogger;
 import frc.robot.extras.SmarterDashboardRegistry;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.claw.ClawSubsystem;
@@ -62,6 +63,9 @@ public class PickupGamePiece extends CommandBase {
       armSubsystem.setRotation(rotation);
       if (Math.abs(rotation - armSubsystem.getRotation()) < ArmConstants.ROTATION_ACCEPTABLE_ERROR) {
         armSubsystem.setExtension(extension);
+        SmartDashboardLogger.debugBoolean("acceptable", true);
+      } else {
+        SmartDashboardLogger.debugBoolean("acceptable", false);
       }
     } else {
       armSubsystem.setRotation(rotation + 1.5);

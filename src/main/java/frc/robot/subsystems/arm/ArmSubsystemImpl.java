@@ -19,6 +19,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
 
@@ -102,10 +103,10 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
     leaderConfig.MotorOutput.Inverted = ArmConstants.LEADER_ROTATION_MOTOR_INVERTED;
     leaderConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ArmConstants.MAX_ROTATION_ROTATIONS;
-    leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ArmConstants.MIN_ROTATION_ROTATIONS;
-    leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ArmConstants.MAX_ROTATION_ROTATIONS;
+    // leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ArmConstants.MIN_ROTATION_ROTATIONS;
+    // leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     leaderRotationMotor.getConfigurator().apply(leaderConfig, HardwareConstants.TIMEOUT_S);
 
     // followerRotationMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
@@ -140,7 +141,7 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
     extensionMotorVelocity = extensionMotor.getRotorVelocity();
 
     rotationEncoderPos = rotationEncoder.getAbsolutePosition();
-    rotationEncoderVelocity = rotationEncoder.getVelocity();    
+    rotationEncoderVelocity = rotationEncoder.getVelocity();
   }
 
   @Override
@@ -148,10 +149,11 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
     // leaderRotationMotor.set(ControlMode.MotionMagic, desiredAngle * Conversions.DEGREES_TO_CANCODER_UNITS);
     // followerRotationMotor.follow(leaderRotationMotor);
 
+    SmartDashboardLogger.debugNumber("desired rotation", desiredAngle);
     MotionMagicVoltage output = new MotionMagicVoltage(desiredAngle);
     leaderRotationMotor.setControl(output);
-    // Follower follower = new Follower(leaderRotationMotor.getDeviceID(), true);
-    // followerRotationMotor.setControl(follower);
+    Follower follower = new Follower(leaderRotationMotor.getDeviceID(), true);
+    followerRotationMotor.setControl(follower);
   }
 
   @Override
@@ -179,6 +181,7 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
   @Override
   public void setExtension(double extension) {
     double PIDOutput = extensionSpeedPIDController.calculate(getExtension(), extension);
+    SmartDashboard.putNumber("desired extension", extension);
     setExtensionSpeed(PIDOutput);
   }
 
@@ -209,7 +212,7 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
     // Convert motor rotation units (2048 for 1 full rotation) to number of rotations
     // return -extensionMotor.getSelectedSensorVelocity() * ArmConstants.EXTENSION_MOTOR_POS_TO_METERS * 10.0;
     extensionMotorVelocity.refresh();
-    return -extensionMotorVelocity.getValue() * ArmConstants.EXTENSION_MOTOR_POS_TO_METERS * 10.0;
+    return -extensionMotorVelocity.getValue() * ArmConstants.EXTENSION_MOTOR_POS_TO_METERS;
   }
 
   @Override

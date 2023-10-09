@@ -10,7 +10,7 @@ public class MoveArmToStowed extends CommandBase {
 
   private final ArmSubsystem armSubsystem;
   private final ClawSubsystem clawSubsystem;
-  private final double armRotation = 180;
+  private final double armRotation = 180.0 / 360.0;
   private final double armExtension = 0.01;
   private final double wristRotation = 0;
 

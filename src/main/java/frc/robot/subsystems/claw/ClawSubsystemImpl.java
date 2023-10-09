@@ -154,5 +154,6 @@ public class ClawSubsystemImpl extends SubsystemBase implements ClawSubsystem {
   @Override
   public void periodic() {
     SmartDashboardLogger.infoBoolean("isManual", isManualControl);
+    SmartDashboardLogger.debugNumber("rotation", getWristAngle());
   }
 }
