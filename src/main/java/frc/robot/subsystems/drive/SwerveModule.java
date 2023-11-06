@@ -2,7 +2,9 @@ package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -29,19 +31,19 @@ public class SwerveModule {
   private final TalonFX driveMotor;
   private final TalonFX turnMotor;
 
-  private final ProfiledPIDController turnPIDController =
-    new ProfiledPIDController(
-      ModuleConstants.TURN_P,
-      ModuleConstants.TURN_I,
-      ModuleConstants.TURN_D,
-      ModuleConstants.TURN_CONSTRAINTS
-    );
+  // private final ProfiledPIDController turnPIDController =
+  //   new ProfiledPIDController(
+  //     ModuleConstants.TURN_P,
+  //     ModuleConstants.TURN_I,
+  //     ModuleConstants.TURN_D,
+  //     ModuleConstants.TURN_CONSTRAINTS
+  //   );
 
-  private final SimpleMotorFeedforward turnFeedForward = new SimpleMotorFeedforward(
-    DriveConstants.TURN_S, 
-    DriveConstants.TURN_V, 
-    DriveConstants.TURN_A
-  );
+  // private final SimpleMotorFeedforward turnFeedForward = new SimpleMotorFeedforward(
+  //   DriveConstants.TURN_S, 
+  //   DriveConstants.TURN_V, 
+  //   DriveConstants.TURN_A
+  // );
 
   // private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(
   //   ModuleConstants.DRIVE_S,
@@ -78,23 +80,13 @@ public class SwerveModule {
     driveMotor = new TalonFX(driveMotorChannel, HardwareConstants.CANIVORE_CAN_BUS_STRING);
     turnMotor = new TalonFX(turnMotorChannel, HardwareConstants.CANIVORE_CAN_BUS_STRING);
         
-    // turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180, HardwareConstants.TIMEOUT_MS);
-    // turnEncoder.configMagnetOffset(-angleZero, HardwareConstants.TIMEOUT_MS);
-    // turnEncoder.configSensorDirection(encoderReversed, HardwareConstants.TIMEOUT_MS);
     CANcoderConfiguration turnEncoderConfig = new CANcoderConfiguration();
     turnEncoderConfig.MagnetSensor.MagnetOffset = -angleZero;
     turnEncoderConfig.MagnetSensor.SensorDirection = encoderReversed;
     turnEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     turnEncoder.getConfigurator().apply(turnEncoderConfig, HardwareConstants.TIMEOUT_S);
 
-    // driveMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
-    // driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, HardwareConstants.TIMEOUT_MS);
-    // driveMotor.config_kF(0, ModuleConstants.DRIVE_F, HardwareConstants.TIMEOUT_MS);
-    // driveMotor.config_kP(0, ModuleConstants.DRIVE_P, HardwareConstants.TIMEOUT_MS);
-    // driveMotor.config_kI(0, ModuleConstants.DRIVE_I, HardwareConstants.TIMEOUT_MS);
-    // driveMotor.config_kD(0, ModuleConstants.DRIVE_D, HardwareConstants.TIMEOUT_MS);
-    // driveMotor.setNeutralMode(NeutralMode.Brake);
-    // driveMotor.setInverted(driveReversed);
+  
     // driveMotor.configNeutralDeadband(HardwareConstants.MIN_FALCON_DEADBAND * 10, HardwareConstants.TIMEOUT_MS);
     // driveMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 60, 65, 0.1), HardwareConstants.TIMEOUT_MS);
     // driveMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60, 65, 0.1), HardwareConstants.TIMEOUT_MS);
@@ -113,10 +105,7 @@ public class SwerveModule {
     // TODO: current limits
     driveMotor.getConfigurator().apply(driveConfig, HardwareConstants.TIMEOUT_S);
 
-    // turnMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
-    // turnMotor.setNeutralMode(NeutralMode.Brake);
-    // turnMotor.setInverted(true);
-    // turnMotor.configNeutralDeadband(HardwareConstants.MIN_FALCON_DEADBAND, HardwareConstants.TIMEOUT_MS);
+   
     // turnMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 60, 65, 0.1), HardwareConstants.TIMEOUT_MS);
     // turnMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60, 65, 0.1), HardwareConstants.TIMEOUT_MS);
     // turnMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
@@ -125,11 +114,17 @@ public class SwerveModule {
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     turnConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
+    turnConfig.Slot0.kP = ModuleConstants.TURN_P;
+    turnConfig.Slot0.kI = ModuleConstants.TURN_I;
+    turnConfig.Slot0.kD = ModuleConstants.TURN_D;
+    turnConfig.Slot0.kS = DriveConstants.TURN_S;
+    turnConfig.Slot0.kV = DriveConstants.TURN_V;
+    turnConfig.MotionMagic.MotionMagicCruiseVelocity = ModuleConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+    turnConfig.MotionMagic.MotionMagicAcceleration = ModuleConstants.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED;
+    turnConfig.MotionMagic.MotionMagicJerk = 0;
+    turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
     // TODO: config current limits
     turnMotor.getConfigurator().apply(turnConfig, HardwareConstants.TIMEOUT_S);
-
-    // Limit the PID Controller's input range between -pi and pi and set the input to be continuous.
-    turnPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     turnEncoderPos = turnEncoder.getAbsolutePosition();
     driveMotorVelocity = driveMotor.getVelocity();
@@ -212,11 +207,14 @@ public class SwerveModule {
     VelocityVoltage driveOutput = new VelocityVoltage(desiredDriveEncoderUnitsPer100MS);
     driveMotor.setControl(driveOutput);
 
-    // Calculate the turning motor output from the turn PID controller.
-    double turnOutput =
-      turnPIDController.calculate(turnRadians, optimizedDesiredState.angle.getRadians())
-        + turnFeedForward.calculate(turnPIDController.getSetpoint().velocity);
-        turnMotor.set(turnOutput / 12);
+    // // Calculate the turning motor output from the turn PID controller.
+    // double turnOutput =
+    //   turnPIDController.calculate(turnRadians, optimizedDesiredState.angle.getRadians())
+    //     + turnFeedForward.calculate(turnPIDController.getSetpoint().velocity);
+    //     turnMotor.set(turnOutput / 12);
+
+    MotionMagicVoltage turnOutput = new MotionMagicVoltage(optimizedDesiredState.angle.getRadians());
+    turnMotor.setControl(turnOutput);
   }
 
   public double getTurnRadians() {
