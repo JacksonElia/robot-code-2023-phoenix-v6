@@ -42,7 +42,7 @@ import frc.robot.subsystems.arm.ArmSubsystemImpl;
 import frc.robot.subsystems.claw.ClawSubsystem;
 import frc.robot.subsystems.claw.ClawSubsystemImpl;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.drive.DriveSubsystemImpl;
+import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystemImplSpark;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -76,7 +76,7 @@ public class RobotContainer {
     buttonBoard1 = new Joystick(JoystickConstants.BUTTON_BOARD_1_ID);
     buttonBoard2 = new Joystick(JoystickConstants.BUTTON_BOARD_2_ID);
 
-    driveSubsystem = new DriveSubsystemImpl();
+    driveSubsystem = new DriveSubsystem();
     visionSubsystem = new VisionSubsystemImpl();
     armSubsystem = new ArmSubsystemImpl();
     clawSubsystem = new ClawSubsystemImpl();
