@@ -70,7 +70,7 @@ public class ClawSubsystemImpl extends SubsystemBase implements ClawSubsystem {
     wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     wristConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
     wristMotor.getConfigurator().apply(wristConfig, HardwareConstants.TIMEOUT_S);
-    wristMotor.setRotorPosition(0);
+    wristMotor.setPosition(0);
 
     // intakeMotor.configFactoryDefault(HardwareConstants.TIMEOUT_MS);
 
@@ -130,7 +130,7 @@ public class ClawSubsystemImpl extends SubsystemBase implements ClawSubsystem {
 
   @Override
   public void zeroWristEncoder() {
-    wristMotor.setRotorPosition(0);
+    wristMotor.setPosition(0);
   }
 
   @Override

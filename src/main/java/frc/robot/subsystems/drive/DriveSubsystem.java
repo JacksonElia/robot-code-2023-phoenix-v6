@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -211,10 +212,9 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     Pose2d estimatedPose = odometry.getEstimatedPosition();
     SmartDashboardLogger.infoString("Estimated pose", estimatedPose.toString());
-    
-    // SmartDashboard.getNumberArray("Module Positions",);
-    // 
-    // SmartDashboard.putNumber(getName(), gyroOffset)
+    SignalLogger.setPath("/media/sda1/");
+    SignalLogger.start();
+    SignalLogger.stop();
     // smarterdashboard:
     SmarterDashboardRegistry.setPose(estimatedPose);
                                             //  pitch, roll, yaw
