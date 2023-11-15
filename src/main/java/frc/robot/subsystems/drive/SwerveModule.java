@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -30,26 +31,6 @@ public class SwerveModule {
   private final CANcoder turnEncoder;
   private final TalonFX driveMotor;
   private final TalonFX turnMotor;
-
-  // private final ProfiledPIDController turnPIDController =
-  //   new ProfiledPIDController(
-  //     ModuleConstants.TURN_P,
-  //     ModuleConstants.TURN_I,
-  //     ModuleConstants.TURN_D,
-  //     ModuleConstants.TURN_CONSTRAINTS
-  //   );
-
-  // private final SimpleMotorFeedforward turnFeedForward = new SimpleMotorFeedforward(
-  //   DriveConstants.TURN_S, 
-  //   DriveConstants.TURN_V, 
-  //   DriveConstants.TURN_A
-  // );
-
-  // private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(
-  //   ModuleConstants.DRIVE_S,
-  //   ModuleConstants.DRIVE_V,
-  //   ModuleConstants.DRIVE_A
-  // );
 
   StatusSignal<Double> turnEncoderPos;
   StatusSignal<Double> driveMotorVelocity;
@@ -128,6 +109,9 @@ public class SwerveModule {
 
     turnEncoderPos = turnEncoder.getAbsolutePosition();
     driveMotorVelocity = driveMotor.getVelocity();
+
+    
+
   }
 
   /**
@@ -242,9 +226,11 @@ public class SwerveModule {
   /** Zeros all the SwerveModule encoders. */
   public void resetEncoders() {
     turnEncoder.setPosition(0);
-    driveMotor.setRotorPosition(0);
+    driveMotor.setPosition(0);
   }
 
   public void periodicFunction() {
+
+    
   }
 }

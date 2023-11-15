@@ -133,7 +133,7 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
     extensionConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
     extensionConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ArmConstants.MAX_EXTENSION_METERS * ArmConstants.EXTENSION_METERS_TO_MOTOR_ROTATIONS;
     extensionConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    extensionMotor.setRotorPosition(0, HardwareConstants.TIMEOUT_S);
+    extensionMotor.setPosition(0, HardwareConstants.TIMEOUT_S);
     extensionMotor.getConfigurator().apply(extensionConfig, HardwareConstants.TIMEOUT_S);
     this.extensionConfig = extensionConfig;
 
@@ -168,7 +168,7 @@ public class ArmSubsystemImpl extends SubsystemBase implements ArmSubsystem  {
   public void resetExtensionEncoder() {
     // extensionMotor.setSelectedSensorPosition(0);
 
-    extensionMotor.setRotorPosition(0);
+    extensionMotor.setPosition(0);
   }
 
   @Override
