@@ -103,7 +103,6 @@ public class RobotContainer {
     SmartDashboard.putData("Auto chooser", autoChooser);
     
     driveSubsystem.zeroHeading();
-    driveSubsystem.zeroPitchAndRoll();
     driveSubsystem.resetOdometry(new Pose2d());
 
     leds.setProcess(LEDProcess.DEFAULT);
@@ -174,8 +173,7 @@ public class RobotContainer {
 
     POVButton driverRightDirectionPad = new POVButton(driverJoystick, JoystickConstants.RIGHT_DPAD_ID);
     driverRightDirectionPad.onTrue(new InstantCommand(driveSubsystem::zeroHeading));
-    driverRightDirectionPad.onTrue(new InstantCommand(() -> driveSubsystem.resetOdometryAndRotation(driveSubsystem.getPose(), driveSubsystem.getHeading())));
-    driverRightDirectionPad.onTrue(new InstantCommand(driveSubsystem::zeroPitchAndRoll));
+    driverRightDirectionPad.onTrue(new InstantCommand(() -> driveSubsystem.resetOdometryAndRotation(driveSubsystem.getPose(), driveSubsystem.getAngleDegrees())));
 
     JoystickButton driverBButton = new JoystickButton(driverJoystick, JoystickConstants.DRIVER_B_BUTTON_ID);
     driverBButton.whileTrue(new AutoPlace(driveSubsystem, visionSubsystem, leds, () -> !driverBButton.getAsBoolean()));
