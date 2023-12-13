@@ -24,7 +24,8 @@ public final class SingleLinearInterpolator {
       return lookupTable[lookupTable.length - 1][1];
     }
     
-    for(int i = 0; i < lookupTable.length; i++) {
+    // Uses point-slope to get the value
+    for (int i = 0; i < lookupTable.length; i++) {
       if (inputXValue == lookupTable[i][0]) {
         return lookupTable[i][1];
       } else if (inputXValue > lookupTable[i][0] && inputXValue < lookupTable[i + 1][0]) {
