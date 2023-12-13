@@ -1,30 +1,23 @@
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.Constants.ModuleConstants;
-import frc.robot.extras.SmartDashboardLogger;
 
 public class SwerveModule {
 
@@ -67,13 +60,6 @@ public class SwerveModule {
     turnEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     turnEncoder.getConfigurator().apply(turnEncoderConfig, HardwareConstants.TIMEOUT_S);
 
-  
-    // driveMotor.configNeutralDeadband(HardwareConstants.MIN_FALCON_DEADBAND * 10, HardwareConstants.TIMEOUT_MS);
-    // driveMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 60, 65, 0.1), HardwareConstants.TIMEOUT_MS);
-    // driveMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60, 65, 0.1), HardwareConstants.TIMEOUT_MS);
-    // driveMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
-    // // driveMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 10);
-    // driveMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
     driveConfig.Slot0.kP = ModuleConstants.DRIVE_P;
     driveConfig.Slot0.kI = ModuleConstants.DRIVE_I;
@@ -86,11 +72,6 @@ public class SwerveModule {
     // TODO: current limits
     driveMotor.getConfigurator().apply(driveConfig, HardwareConstants.TIMEOUT_S);
 
-   
-    // turnMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 60, 65, 0.1), HardwareConstants.TIMEOUT_MS);
-    // turnMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60, 65, 0.1), HardwareConstants.TIMEOUT_MS);
-    // turnMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
-    // turnMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 250);
     TalonFXConfiguration turnConfig = new TalonFXConfiguration();
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -109,31 +90,6 @@ public class SwerveModule {
 
     turnEncoderPos = turnEncoder.getAbsolutePosition();
     driveMotorVelocity = driveMotor.getVelocity();
-
-    
-
-  }
-
-  /**
-   * @param currentAngle what the controller currently reads (radians)
-   * @param targetAngleSetpoint the desired angle (radians)
-   * @return the target angle in controller's scope (radians)
-   */
-  public static double calculateContinuousInputSetpoint(double currentAngle, double targetAngleSetpoint) {
-    targetAngleSetpoint = Math.IEEEremainder(targetAngleSetpoint, Math.PI * 2);
-
-    double remainder = currentAngle % (Math.PI * 2);
-    double adjustedAngleSetpoint = targetAngleSetpoint + (currentAngle - remainder);
-
-    // We don't want to rotate over 180 degrees, so just rotate the other way (add a
-    // full rotation)
-    if (adjustedAngleSetpoint - currentAngle > Math.PI) {
-        adjustedAngleSetpoint -= Math.PI * 2;
-    } else if (adjustedAngleSetpoint - currentAngle < -Math.PI) {
-        adjustedAngleSetpoint += Math.PI * 2;
-    }
-
-    return adjustedAngleSetpoint;
   }
 
   /**
@@ -146,18 +102,21 @@ public class SwerveModule {
   }
 
   /**
-   * Returns the current state of the module.
+   * Gets the current state of the module.
    * @return The current state of the module.
    */
   public SwerveModuleState getState() {
     driveMotorVelocity.refresh();
 
     double speedMetersPerSecond = ModuleConstants.DRIVE_TO_METERS_PER_SECOND * driveMotorVelocity.getValue();
-    // double turnRadians = (Math.PI / 180) * turnEncoder.getAbsolutePosition();
     double turnRadians = Rotation2d.fromRotations(getModuleHeading()).getRadians();
     return new SwerveModuleState(speedMetersPerSecond, new Rotation2d(turnRadians));
   }
 
+  /**
+   * Gets the current SwerveModulePosition which contains the distance traveled and rotation
+   * @return The position of the moddule
+   */
   public SwerveModulePosition getPosition() {
     driveMotorVelocity.refresh();
 
@@ -171,44 +130,28 @@ public class SwerveModule {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    double turnRadians = getTurnRadians();
-
+    double turnRadians = getTurnPositionRadians();
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(desiredState, new Rotation2d(turnRadians));
-
     // Converts meters per second to rpm
     double desiredDriveRPM = optimizedDesiredState.speedMetersPerSecond * 60 
       * ModuleConstants.DRIVE_GEAR_RATIO / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
-      
     // Converts rpm to encoder units per 100 milliseconds
     double desiredDriveEncoderUnitsPer100MS = desiredDriveRPM / 600.0 * 1;  // TODO: check if 1 is falcon resolution
-
-    // Sets the drive motor's speed using the built in pid controller
-    // driveMotor.set(ControlMode.Velocity, desiredDriveEncoderUnitsPer100MS, 
-    //   DemandType.ArbitraryFeedForward, driveFeedForward.calculate(optimizedDesiredState.speedMetersPerSecond));
-    // driveOutput.FeedForward = driveFeedForward.calculate(optimizedDesiredState.speedMetersPerSecond);
-
+    // Sets the drive motor output using the built in PID controller for velocity
     VelocityVoltage driveOutput = new VelocityVoltage(desiredDriveEncoderUnitsPer100MS);
     driveMotor.setControl(driveOutput);
-
-    // // Calculate the turning motor output from the turn PID controller.
-    // double turnOutput =
-    //   turnPIDController.calculate(turnRadians, optimizedDesiredState.angle.getRadians())
-    //     + turnFeedForward.calculate(turnPIDController.getSetpoint().velocity);
-    //     turnMotor.set(turnOutput / 12);
-
+    // Sets the turn motor output using the built in Profiled PID controller for position (angle)
     MotionMagicVoltage turnOutput = new MotionMagicVoltage(optimizedDesiredState.angle.getRadians());
     turnMotor.setControl(turnOutput);
   }
 
-  public double getTurnRadians() {
-    // return ((2 * Math.PI) / 360) * turnEncoder.getAbsolutePosition();
+  public double getTurnPositionRadians() {
     turnEncoderPos.refresh();
     return Rotation2d.fromRotations(turnEncoderPos.getValue()).getRadians();
   }
 
-  public double getAbsolutePosition() {
-    // return turnEncoder.getAbsolutePosition();
+  public double getTurnAbsolutePositionRotations() {
     turnEncoderPos.refresh();
     return turnEncoderPos.getValue();
   }
